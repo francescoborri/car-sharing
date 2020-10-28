@@ -1,9 +1,12 @@
 <?php
 require_once 'config.php';
 
-define('N_AUTO', 100);
-define('N_SOCI', 200);
-define('N_NOLEGGI', 50);
+define('N_AUTO', 500);
+define('N_SOCI', 300);
+define('N_NOLEGGI', 150);
+define('START_DATE', 946681200);
+define('END_DATE', 1609455599);
+define('DAY', 86400);
 
 $connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
@@ -52,7 +55,7 @@ for ($i = 0; $i < N_AUTO; $i++) {
     $targhe[$targa] = true;
     $marca = $marche[rand(0, count($marche) - 1)];
     $modello = 'Modello ' . rand(1, 10);
-    $costo_giornaliero = rand(50, 99) + (double)(rand(0, 9) / 10);
+    $costo_giornaliero = rand(50, 99) + (float)(rand(0, 9) / 10);
 
     $query->execute();
     if ($query->affected_rows <= 0)
@@ -80,8 +83,8 @@ for ($i = 0; $i < N_SOCI; $i++) {
 
         for ($j = 0; $j < 6; $j++)
             $codice_fiscale .= chr(rand(65, 90));
-       
-        $codice_fiscale .= 
+
+        $codice_fiscale .=
             sprintf('%02d', rand(0, 99)) .
             $mesi[rand(0, count($mesi) - 1)] .
             sprintf('%02d', rand(1, 31)) .
@@ -90,7 +93,7 @@ for ($i = 0; $i < N_SOCI; $i++) {
     } while (array_key_exists($codice_fiscale, $codici_fiscali));
     $codici_fiscali[$codice_fiscale] = true;
 
-    $cognome = "Cognome$i"; 
+    $cognome = "Cognome$i";
     $nome = "Nome$i";
     $indirizzo = 'Via n' . strval(rand(1, 50)) . ' n. ' . strval(rand(1, 50));
     $telefono = '3';
@@ -109,3 +112,43 @@ for ($i = 0; $i < N_SOCI; $i++) {
 
 $connection->commit();
 $query->close();
+
+$query = $connection->prepare('INSERT INTO `noleggi`(`id_noleggio`, `targa`, `codice_fiscale`, `inizio`, `fine`, `auto_restituita`) VALUES (NULL, ?, ?, ?, ?, ?)');
+$query->bind_param(
+    'ssssi',
+    $targa,
+    $codice_fiscale,
+    $inizio,
+    $fine,
+    $auto_restituita
+);
+
+$targhe_keys = array_keys($targhe);
+$codici_fiscali_keys = array_keys($codici_fiscali);
+
+for ($i = 0; $i < N_NOLEGGI; $i++) {
+    $temp = -1;
+    while (!array_key_exists($temp, $targhe_keys))
+        $temp = rand(0, count($targhe_keys) - 1);
+    $targa = $targhe_keys[$temp];
+    unset($targhe_keys[$temp]);
+
+    $codice_fiscale = $codici_fiscali_keys[rand(0, count($codici_fiscali_keys) - 1)];
+
+    $start_timestamp = rand(START_DATE, END_DATE - (DAY * 62));
+    $inizio = date('Y-m-d H:i:s', $start_timestamp);
+    $end_timestamp = rand($start_timestamp + DAY, END_DATE);;
+    while ($end_timestamp > $start_timestamp + (DAY * 62))
+        $end_timestamp = rand($start_timestamp, END_DATE);
+    $fine = date('Y-m-d H:i:s', $end_timestamp);
+    $auto_restituita = rand(1, 100) > 15;
+
+    $query->execute();
+    if ($query->affected_rows <= 0)
+        throw new Exception('Errore di inserimento: ' . $query->error);
+}
+
+$connection->commit();
+$query->close();
+
+$connection->close();
