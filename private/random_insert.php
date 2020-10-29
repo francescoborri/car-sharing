@@ -2,8 +2,8 @@
 require_once 'config.php';
 
 define('N_AUTO', 500);
-define('N_SOCI', 300);
-define('N_NOLEGGI', 150);
+define('N_SOCI', 100);
+define('N_NOLEGGI', 250);
 define('START_DATE', 946681200);
 define('END_DATE', 1609455599);
 define('DAY', 86400);
@@ -33,9 +33,9 @@ $marche = [
 ];
 $mesi = ['A', 'B', 'C', 'D', 'E', 'H', 'L', 'M', 'P', 'R', 'S', 'T'];
 
+$connection->query('DELETE FROM `noleggi` WHERE 1');
 $connection->query('DELETE FROM `auto` WHERE 1');
 $connection->query('DELETE FROM `soci` WHERE 1');
-$connection->query('DELETE FROM `noleggi` WHERE 1');
 
 $query = $connection->prepare('INSERT INTO `auto`(`targa`, `marca`, `modello`, `costo_giornaliero`) VALUES (?, ?, ?, ?)');
 $query->bind_param(
@@ -141,7 +141,7 @@ for ($i = 0; $i < N_NOLEGGI; $i++) {
     while ($end_timestamp > $start_timestamp + (DAY * 62))
         $end_timestamp = rand($start_timestamp, END_DATE);
     $fine = date('Y-m-d H:i:s', $end_timestamp);
-    $auto_restituita = rand(1, 100) > 15;
+    $auto_restituita = rand(1, 100) > 5;
 
     $query->execute();
     if ($query->affected_rows <= 0)
