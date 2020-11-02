@@ -141,7 +141,7 @@ for ($i = 0; $i < N_NOLEGGI; $i++) {
     while ($end_timestamp > $start_timestamp + (DAY * 62))
         $end_timestamp = rand($start_timestamp, END_DATE);
     $fine = date('Y-m-d H:i:s', $end_timestamp);
-    $auto_restituita = rand(1, 100) > 5;
+    $auto_restituita = $end_timestamp > 1546300800  ? rand(1, 100) > 20 : 1;
 
     $query->execute();
     if ($query->affected_rows <= 0)
