@@ -23,7 +23,7 @@ if (isset($_POST['username'], $_POST['password'])) {
 			session_start();
 			$_SESSION['username'] = $username;
 			$_SESSION['start_time'] = time();
-			header('location: ' . ROOT . '/home');
+			header('location: ' . ROOT . '/view');
 		} else
 			$on_error = true;
 	}
