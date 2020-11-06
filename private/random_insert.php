@@ -136,11 +136,14 @@ for ($i = 0; $i < N_NOLEGGI; $i++) {
     $codice_fiscale = $codici_fiscali_keys[rand(0, count($codici_fiscali_keys) - 1)];
 
     $start_timestamp = rand(START_DATE, END_DATE - (DAY * 62));
-    $inizio = date('Y-m-d H:i:s', $start_timestamp);
-    $end_timestamp = rand($start_timestamp + DAY, END_DATE);;
+    $inizio = date('Y-m-d', $start_timestamp);
+    $end_timestamp = rand($start_timestamp + DAY, END_DATE);
     while ($end_timestamp > $start_timestamp + (DAY * 62))
-        $end_timestamp = rand($start_timestamp, END_DATE);
-    $fine = date('Y-m-d H:i:s', $end_timestamp);
+        $end_timestamp = rand($start_timestamp + DAY, END_DATE);
+    $data_restituzione = rand($end_timestamp - DAY, $end_timestamp + DAY);
+    while ($end_timestamp > $start_timestamp + (DAY * 62))
+        $end_timestamp = rand($start_timestamp + DAY, END_DATE);
+    $fine = date('Y-m-d', $end_timestamp);
     $auto_restituita = $end_timestamp > 1546300800  ? rand(1, 100) > 20 : 1;
 
     $query->execute();

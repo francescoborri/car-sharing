@@ -6,12 +6,18 @@ if (isset($_GET['start'], $_GET['end'])) {
 	$start = htmlentities($_GET['start']);
 	$end = htmlentities($_GET['end']);
 	$result = $connection->query("
-		SELECT `auto`.`marca`, `auto`.`modello`, `auto`.`costo_giornaliero`, `auto`.`targa`, `noleggi`.`targa` AS `my_targa`
+		SELECT `auto`.*, `noleggi`.*, `noleggi`.`targa` AS `my_targa`
 		FROM `noleggi`
-		INNER JOIN `auto` USING (`targa`)
-		WHERE
-			(`noleggi`.`inizio` < '$start' AND `noleggi`.`fine` < '$start' AND `noleggi`.`auto_restituita`) OR
-    		(`noleggi`.`inizio` > '$end' AND `noleggi`.`fine` > '$end')
+		INNER JOIN `auto` USING(`targa`)
+		WHERE `targa` NOT IN (
+			SELECT `targa`
+			FROM `noleggi`
+			WHERE
+				IF(`noleggi`.`data_restituzione` is NULL,
+					
+				(`noleggi`.`data_inizio` < '$start' AND `noleggi`.`fine` < '$start' AND `noleggi`.`auto_restituita`) OR
+				(`noleggi`.`inizio` > '$end' AND `noleggi`.`fine` > '$end')
+			)
 		GROUP BY `noleggi`.`targa`
 		HAVING COUNT(*) = (SELECT COUNT(*) FROM `noleggi` WHERE `noleggi`.`targa` = `my_targa`);
 	");
@@ -79,6 +85,8 @@ if (isset($_GET['start'], $_GET['end'])) {
 								<th>Modello</th>
 								<th>Costo giornaliero</th>
 								<th>Targa</th>
+								<th>Inizio</th>
+								<th>Fine</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -88,6 +96,9 @@ if (isset($_GET['start'], $_GET['end'])) {
 									<td><?= $record['modello'] ?></td>
 									<td><?= $record['costo_giornaliero'] ?></td>
 									<td><?= $record['targa'] ?></td>
+									<td><?= $record['data_inizio'] ?></td>
+									<td><?= $record['data_fine'] ?></td>
+									<td><?= $record['data_restituzione'] ?></td>
 								</tr>
 							<?php } ?>
 						</tbody>
