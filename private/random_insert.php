@@ -34,6 +34,7 @@ $marche = [
 $mesi = ['A', 'B', 'C', 'D', 'E', 'H', 'L', 'M', 'P', 'R', 'S', 'T'];
 
 $connection->query('DELETE FROM `noleggi` WHERE 1');
+$connection->query('ALTER TABLE `noleggi` AUTO_INCREMENT = 1');
 $connection->query('DELETE FROM `auto` WHERE 1');
 $connection->query('DELETE FROM `soci` WHERE 1');
 
@@ -113,14 +114,14 @@ for ($i = 0; $i < N_SOCI; $i++) {
 $connection->commit();
 $query->close();
 
-$query = $connection->prepare('INSERT INTO `noleggi`(`id_noleggio`, `targa`, `codice_fiscale`, `inizio`, `fine`, `auto_restituita`) VALUES (NULL, ?, ?, ?, ?, ?)');
+$query = $connection->prepare('INSERT INTO `noleggi`(`id_noleggio`, `targa`, `codice_fiscale`, `data_inizio`, `data_fine`, `data_restituzione`) VALUES (NULL, ?, ?, ?, ?, ?)');
 $query->bind_param(
-    'ssssi',
+    'sssss',
     $targa,
     $codice_fiscale,
     $inizio,
     $fine,
-    $auto_restituita
+    $data_restituzione
 );
 
 $targhe_keys = array_keys($targhe);
@@ -135,16 +136,14 @@ for ($i = 0; $i < N_NOLEGGI; $i++) {
 
     $codice_fiscale = $codici_fiscali_keys[rand(0, count($codici_fiscali_keys) - 1)];
 
-    $start_timestamp = rand(START_DATE, END_DATE - (DAY * 62));
+    $start_timestamp = rand(START_DATE, END_DATE);
     $inizio = date('Y-m-d', $start_timestamp);
-    $end_timestamp = rand($start_timestamp + DAY, END_DATE);
-    while ($end_timestamp > $start_timestamp + (DAY * 62))
-        $end_timestamp = rand($start_timestamp + DAY, END_DATE);
-    $data_restituzione = rand($end_timestamp - DAY, $end_timestamp + DAY);
-    while ($end_timestamp > $start_timestamp + (DAY * 62))
-        $end_timestamp = rand($start_timestamp + DAY, END_DATE);
+
+    $end_timestamp = rand($start_timestamp + (DAY * 7), $start_timestamp + (DAY * 62));
     $fine = date('Y-m-d', $end_timestamp);
-    $auto_restituita = $end_timestamp > 1546300800  ? rand(1, 100) > 20 : 1;
+
+    $return = rand($end_timestamp - (DAY * 3), $end_timestamp + (DAY * 3));
+    $data_restituzione = date('Y-m-d', $return);
 
     $query->execute();
     if ($query->affected_rows <= 0)

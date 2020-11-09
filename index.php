@@ -1,3 +1,3 @@
 <?php
-require_once './private/session.php';
-header('location: ' . ROOT . '/private');
+require_once 'private/config.php';
+header('location: ' . ROOT . '/home');
