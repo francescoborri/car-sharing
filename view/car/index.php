@@ -79,6 +79,7 @@ if (!$result) {
 				<table class="table table-borderless table-hover table-dark text-center rounded mb-0">
 					<thead>
 						<tr>
+							<th>Targa</th>
 							<th>Marca</th>
 							<th>Modello</th>
 							<th>Costo giornaliero</th>
@@ -87,6 +88,7 @@ if (!$result) {
 					<tbody>
 						<?php while ($record = $result->fetch_assoc()) { ?>
 							<tr>
+								<td><?= $record['targa'] ?></td>
 								<td><?= $record['marca'] ?></td>
 								<td><?= $record['modello'] ?></td>
 								<td>€<?= $record['costo_giornaliero'] ?></td>

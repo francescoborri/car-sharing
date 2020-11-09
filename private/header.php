@@ -1,6 +1,6 @@
 <?php
 require_once 'config.php';
-session_start();
+if (session_status() == PHP_SESSION_NONE) session_start();
 $loggedin = isset($_SESSION['username'], $_SESSION['start_time']) && time() - $_SESSION['start_time'] < SESSION_TIMEOUT;
 ?>
 
