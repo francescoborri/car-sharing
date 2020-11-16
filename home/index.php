@@ -41,6 +41,7 @@
 						<li data-target="#sample-cars" data-slide-to="2"></li>
 						<li data-target="#sample-cars" data-slide-to="3"></li>
 						<li data-target="#sample-cars" data-slide-to="4"></li>
+						<li data-target="#sample-cars" data-slide-to="5"></li>
 					</ol>
 					<div class="carousel-inner">
 						<div class="carousel-item active">
@@ -57,6 +58,9 @@
 						</div>
 						<div class="carousel-item">
 							<img src="<?= ROOT . '/res/cricchetto.png' ?>" class="mb-5 img-fluid rounded logo">
+						</div>
+						<div class="carousel-item">
+							<img src="<?= ROOT . '/res/oppressor.webp' ?>" class="mb-5 img-fluid rounded logo">
 						</div>
 					</div>
 					<a class="carousel-control-prev" href="#sample-cars" role="button" data-slide="prev">

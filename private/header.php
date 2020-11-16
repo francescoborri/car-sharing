@@ -4,7 +4,7 @@ if (session_status() == PHP_SESSION_NONE) session_start();
 $loggedin = isset($_SESSION['username'], $_SESSION['start_time']) && time() - $_SESSION['start_time'] < SESSION_TIMEOUT;
 ?>
 
-<nav class="navbar navbar-expand-sm navbar-dark bg-dark sticky-top shadow-lg text-light">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top shadow-lg text-light">
     <a class="navbar-brand" href="<?= ROOT ?>">
         <span class="mr-2">
             <img src="<?= ROOT . '/res/car.svg' ?>">
@@ -18,12 +18,11 @@ $loggedin = isset($_SESSION['username'], $_SESSION['start_time']) && time() - $_
         <?php if ($loggedin) { ?>
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown">Inserisci</a>
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown">Aggiungi</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="<?= ROOT . '/new/member' ?>">Socio</a>
                         <a class="dropdown-item" href="<?= ROOT . '/new/car' ?>">Auto</a>
-                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="<?= ROOT . '/new/hire' ?>">Noleggio</a>
+                        <a class="dropdown-item" href="<?= ROOT . '/new/member' ?>">Socio</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -31,11 +30,15 @@ $loggedin = isset($_SESSION['username'], $_SESSION['start_time']) && time() - $_
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="<?= ROOT . '/view/car' ?>">Auto</a>
                         <a class="dropdown-item" href="<?= ROOT . '/view/hire' ?>">Noleggi</a>
+                        <a class="dropdown-item" href="<?= ROOT . '/view/member' ?>">Socio</a>
                     </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= ROOT . '/close' ?>">Chiudi un noleggio</a>
                 </li>
             </ul>
             <ul class="navbar-nav">
-                <li class="nav-item mb-sm-auto mb-2 mr-2">
+                <li class="nav-item mb-md-auto mb-2 mr-2">
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">

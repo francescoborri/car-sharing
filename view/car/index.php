@@ -40,13 +40,13 @@ if (!$result) {
 	<div class="container-fluid px-0">
 		<?php require_once ABSOLUTE_ROOT . '/private/header.php' ?>
 		<div class="row justify-content-center">
-			<div class="jumbotron jumbotron-fluid w-100 mb-3 text-light shadow" style="background-color: #545d65;">
-				<div class="row justify-content-around">
+			<div class="jumbotron jumbotron-fluid text-light shadow w-100 mb-3" style="background-color: #545d65;">
+				<div class="row justify-content-around mx-md-0 mx-3">
 					<div class="col-md-auto col-10 text-center my-auto">
 						<h1 class="display-4">Auto disponibili</h1>
 						<p class="lead text-break"><?= isset($_GET['start'], $_GET['end']) ? "Ci sono $result->num_rows auto disponibili nel periodo che hai selezionato." : 'Cerca un\'auto disponibile selezionando il periodo di noleggio.' ?></p>
 					</div>
-					<div class="col-auto">
+					<div class="col-md-auto">
 						<form action="./" method="GET">
 							<ul class="list-group shadow">
 								<li class="list-group-item p-3">
@@ -54,7 +54,7 @@ if (!$result) {
 										<div class="input-group-prepend">
 											<span class="input-group-text">Inizio</span>
 										</div>
-										<input type="date" class="form-control" name="start" <?= isset($_GET['start']) ? "value=\"{$_GET['start']}\"" : '' ?>>
+										<input type="date" class="form-control" name="start" <?= isset($_GET['start']) ? "value=\"{$_GET['start']}\"" : '' ?> required>
 									</div>
 								</li>
 								<li class="list-group-item p-3">
@@ -62,7 +62,7 @@ if (!$result) {
 										<div class="input-group-prepend">
 											<span class="input-group-text">Fine</span>
 										</div>
-										<input type="date" class="form-control" name="end" <?= isset($_GET['end']) ? "value=\"{$_GET['end']}\"" : '' ?>>
+										<input type="date" class="form-control" name="end" <?= isset($_GET['end']) ? "value=\"{$_GET['end']}\"" : '' ?> required>
 									</div>
 								</li>
 								<li class="list-group-item p-3">
