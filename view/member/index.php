@@ -66,7 +66,7 @@ if (!$hires || !$members) {
                         <h1 class="display-4"><?= $title ?></h1>
                         <p class="lead text-break"><?= $description ?></p>
                     </div>
-                    <?= isset($member) ? '<div class="col-auto row justify-content-center px-0">' : '' ?>
+                    <?= isset($member) ? '<div class="col-auto row justify-content-center px-0 mx-md-3">' : '' ?>
                     <?php if (isset($member)) { ?>
                         <div class="col-md-auto my-md-auto mb-3">
                             <div class="card shadow text-body">
@@ -158,5 +158,3 @@ if (!$hires || !$members) {
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 </body>
-
-</html>
