@@ -66,7 +66,7 @@ if (!$hires || !$members) {
                         <h1 class="display-4"><?= $title ?></h1>
                         <p class="lead text-break"><?= $description ?></p>
                     </div>
-                    <?= isset($member) ? '<div class="col-auto row justify-content-center px-0">' : '' ?>
+                    <?= isset($member) ? '<div class="col-auto row justify-content-center px-0 mx-md-3">' : '' ?>
                     <?php if (isset($member)) { ?>
                         <div class="col-md-auto my-md-auto mb-3">
                             <div class="card shadow text-body">
