@@ -91,7 +91,7 @@ if (!$hires || !$members) {
                                         <select class="custom-select" name="cf" required>
                                             <option disabled hidden selected>Seleziona un socio</option>
                                             <?php while ($record = $members->fetch_assoc()) { ?>
-                                                <option value="<?= $record['codice_fiscale'] ?>" <?= isset($member) && $record['codice_fiscale'] == $member['codice_fiscale'] ? 'selected' : '' ?>><?= "{$record['cognome']} {$record['nome']}" ?></option>
+                                                <option value="<?= $record['codice_fiscale'] ?>" <?= isset($member) && $record['codice_fiscale'] == $member['codice_fiscale'] ? 'selected' : '' ?>><?= "{$record['nome']} {$record['cognome']}" ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>

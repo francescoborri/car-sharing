@@ -63,8 +63,8 @@ $loggedin = isset($_SESSION['username'], $_SESSION['start_time']) && time() - $_
                 </li>
             </ul>
             <ul class="navbar-nav">
-                <li class="nav-item mb-sm-auto mb-2 mr-2">
-                    <a href="<?= ROOT . '/login' ?>" class="btn btn-primary mr-2">Accedi</a>
+                <li class="nav-item mb-md-auto mb-2 mr-2">
+                    <a href="<?= ROOT . '/login' ?>" class="btn btn-primary">Accedi</a>
                 </li>
                 <li class="nav-item">
                     <a href="<?= ROOT . '/signin' ?>" class="btn btn-primary">Registrati</a>
