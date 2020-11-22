@@ -33,9 +33,6 @@ $loggedin = isset($_SESSION['username'], $_SESSION['start_time']) && time() - $_
                         <a class="dropdown-item" href="<?= ROOT . '/view/member' ?>">Socio</a>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= ROOT . '/close' ?>">Chiudi un noleggio</a>
-                </li>
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item mb-md-auto mb-2 mr-2">

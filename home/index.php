@@ -60,7 +60,7 @@
 							<img src="<?= ROOT . '/res/cricchetto.png' ?>" class="mb-5 img-fluid rounded logo">
 						</div>
 						<div class="carousel-item">
-							<img src="<?= ROOT . '/res/oppressor.webp' ?>" class="mb-5 img-fluid rounded logo">
+							<img src="<?= ROOT . '/res/oppressor.webp' ?>" class="mb-5 img-fluid rounded shadow-lg logo">
 						</div>
 					</div>
 					<a class="carousel-control-prev" href="#sample-cars" role="button" data-slide="prev">

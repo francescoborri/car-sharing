@@ -128,25 +128,25 @@ if (!$hires || !$members) {
             <table class="table table-borderless table-hover table-dark text-center rounded mb-0">
                 <thead>
                     <tr>
-                        <th>ID noleggio</th>
-                        <th>Targa auto</th>
-                        <th>Marca</th>
-                        <th>Modello</th>
-                        <th>Inizio</th>
-                        <th>Fine</th>
-                        <th>Data di restituzione</th>
+                        <th class="align-middle">ID noleggio</th>
+                        <th class="align-middle">Targa auto</th>
+                        <th class="align-middle">Marca</th>
+                        <th class="align-middle">Modello</th>
+                        <th class="align-middle">Inizio</th>
+                        <th class="align-middle">Fine</th>
+                        <th class="align-middle">Data di restituzione</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($record = $hires->fetch_assoc()) { ?>
                         <tr>
-                            <td><?= $record['id_noleggio'] ?></td>
-                            <td><?= $record['targa'] ?></td>
-                            <td><?= $record['marca'] ?></td>
-                            <td><?= $record['modello'] ?></td>
-                            <td><?= date('j M Y', strtotime($record['data_inizio'])) ?></td>
-                            <td><?= date('j M Y', strtotime($record['data_fine'])) ?></td>
-                            <td><?= date('j M Y', strtotime($record['data_restituzione'])) ?></td>
+                            <td class="align-middle"><?= $record['id_noleggio'] ?></td>
+                            <td class="align-middle"><?= $record['targa'] ?></td>
+                            <td class="align-middle"><?= $record['marca'] ?></td>
+                            <td class="align-middle"><?= $record['modello'] ?></td>
+                            <td class="align-middle"><?= date('j M Y', strtotime($record['data_inizio'])) ?></td>
+                            <td class="align-middle"><?= date('j M Y', strtotime($record['data_fine'])) ?></td>
+                            <td class="align-middle"><?= date('j M Y', strtotime($record['data_restituzione'])) ?></td>
                         </tr>
                     <?php } ?>
                 </tbody>

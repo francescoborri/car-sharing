@@ -17,3 +17,7 @@ body {
 body {
     font-family: 'Product Sans';
 }
+
+.rounded-bottom-right {
+    border-radius: 0px 0px .25rem 0px;
+}
