@@ -4,7 +4,7 @@ require_once ABSOLUTE_ROOT . '/private/session.php';
 
 $connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
-$members = $connection->query('SELECT * FROM `soci` ORDER BY `cognome`');
+$members_result = $connection->query('SELECT * FROM `soci` ORDER BY `cognome`');
 $title = "Noleggi di un socio.";
 $description = "Visualizza i noleggi effettuati da un socio in un determinato periodo.";
 
@@ -30,7 +30,7 @@ if (isset($_GET['cf'], $_GET['start'], $_GET['end'])) {
         "
     );
     $title = "Noleggi di {$member['nome']} {$member['cognome']}";
-    $description = "Stai visualizzando i noleggi di {$member['nome']} {$member['cognome']}, che ha effettuato {$hires->num_rows} auto fra il " . date('j M Y', strtotime($start)) . " e il " . date('j M Y', strtotime($end));
+    $description = "Stai visualizzando i noleggi di {$member['nome']} {$member['cognome']}, che ha noleggiato {$hires->num_rows} auto fra il " . date('j M Y', strtotime($start)) . " e il " . date('j M Y', strtotime($end));
 } else
     $hires = $connection->query(
         "SELECT *
@@ -39,10 +39,14 @@ if (isset($_GET['cf'], $_GET['start'], $_GET['end'])) {
         ORDER BY `noleggi`.`data_inizio`"
     );
 
-if (!$hires || !$members) {
+if (!$hires || !$members_result) {
     echo "Errore: " . $connection->error;
     die();
 }
+
+$members = [];
+while ($record = $members_result->fetch_assoc())
+    $members[] = $record;
 ?>
 
 <!doctype html>
@@ -90,8 +94,8 @@ if (!$hires || !$members) {
                                         </div>
                                         <select class="custom-select" name="cf" required>
                                             <option disabled hidden selected>Seleziona un socio</option>
-                                            <?php while ($record = $members->fetch_assoc()) { ?>
-                                                <option value="<?= $record['codice_fiscale'] ?>" <?= isset($member) && $record['codice_fiscale'] == $member['codice_fiscale'] ? 'selected' : '' ?>><?= "{$record['nome']} {$record['cognome']}" ?></option>
+                                            <?php foreach ($members as $current) { ?>
+                                                <option value="<?= $current['codice_fiscale'] ?>" <?= isset($member) && $current['codice_fiscale'] == $member['codice_fiscale'] ? 'selected' : '' ?>><?= "{$current['nome']} {$current['cognome']}" ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -122,37 +126,65 @@ if (!$hires || !$members) {
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row justify-content-center mb-3 mx-3">
-        <div class="col-md-10 col-12 table-responsive shadow-lg px-0">
-            <table class="table table-borderless table-hover table-dark text-center rounded mb-0">
-                <thead>
-                    <tr>
-                        <th class="align-middle">ID noleggio</th>
-                        <th class="align-middle">Targa auto</th>
-                        <th class="align-middle">Marca</th>
-                        <th class="align-middle">Modello</th>
-                        <th class="align-middle">Inizio</th>
-                        <th class="align-middle">Fine</th>
-                        <th class="align-middle">Data di restituzione</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($record = $hires->fetch_assoc()) { ?>
-                        <tr>
-                            <td class="align-middle"><?= $record['id_noleggio'] ?></td>
-                            <td class="align-middle"><?= $record['targa'] ?></td>
-                            <td class="align-middle"><?= $record['marca'] ?></td>
-                            <td class="align-middle"><?= $record['modello'] ?></td>
-                            <td class="align-middle"><?= date('j M Y', strtotime($record['data_inizio'])) ?></td>
-                            <td class="align-middle"><?= date('j M Y', strtotime($record['data_fine'])) ?></td>
-                            <td class="align-middle"><?= date('j M Y', strtotime($record['data_restituzione'])) ?></td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
+        <?php if (isset($member)) { ?>
+            <div class="row justify-content-center mb-3 mx-3">
+                <div class="col-md-10 col-12 table-responsive shadow-lg px-0">
+                    <table class="table table-borderless table-hover table-dark text-center rounded mb-0">
+                        <thead>
+                            <tr>
+                                <th class="align-middle">ID noleggio</th>
+                                <th class="align-middle">Targa auto</th>
+                                <th class="align-middle">Marca</th>
+                                <th class="align-middle">Modello</th>
+                                <th class="align-middle">Inizio</th>
+                                <th class="align-middle">Fine</th>
+                                <th class="align-middle">Data di restituzione</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($record = $hires->fetch_assoc()) { ?>
+                                <tr>
+                                    <td class="align-middle"><?= $record['id_noleggio'] ?></td>
+                                    <td class="align-middle"><?= $record['targa'] ?></td>
+                                    <td class="align-middle"><?= $record['marca'] ?></td>
+                                    <td class="align-middle"><?= $record['modello'] ?></td>
+                                    <td class="align-middle"><?= date('j M Y', strtotime($record['data_inizio'])) ?></td>
+                                    <td class="align-middle"><?= date('j M Y', strtotime($record['data_fine'])) ?></td>
+                                    <td class="align-middle"><?= date('j M Y', strtotime($record['data_restituzione'])) ?></td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <?php } else { ?>
+            <div class="row justify-content-center mb-3 mx-3">
+                <div class="col-md-10 col-12 table-responsive shadow-lg px-0">
+                    <table class="table table-borderless table-hover table-dark text-center rounded mb-0">
+                        <thead>
+                            <tr>
+                                <th class="align-middle">Codice fiscale</th>
+                                <th class="align-middle">Cognome</th>
+                                <th class="align-middle">Nome</th>
+                                <th class="align-middle">Indirizzo</th>
+                                <th class="align-middle">Telefono</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($members as $current) { ?>
+                                <tr>
+                                    <td class="align-middle"><?= $current['codice_fiscale'] ?></td>
+                                    <td class="align-middle"><?= $current['cognome'] ?></td>
+                                    <td class="align-middle"><?= $current['nome'] ?></td>
+                                    <td class="align-middle"><?= $current['indirizzo'] ?></td>
+                                    <td class="align-middle"><?= $current['telefono'] ?></td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <?php } ?>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
