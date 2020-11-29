@@ -1,6 +1,7 @@
 <?php
 require_once '../../private/config.php';
 require_once ABSOLUTE_ROOT . '/private/session.php';
+
 $connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
 if (!isset($_GET['type']) || $_GET['type'] == 'all') {
@@ -168,9 +169,9 @@ while ($row = $result->fetch_array())
 	<script type="text/javascript">
 		<?php foreach ($hires as $index => $hire) { ?>
 			$('#close-btn-<?= $index ?>').click(() => {
-				$('#id-noleggio').attr('value', '<?= $hire['id_noleggio'] ?>');
-				$('#targa-noleggio').attr('value', '<?= $hire['targa'] ?>');
-				$('#codice-fiscale-noleggio').attr('value', '<?= $hire['codice_fiscale'] ?>');
+				$('#id_noleggio').attr('value', '<?= $hire['id_noleggio'] ?>');
+				$('#targa').attr('value', '<?= $hire['targa'] ?>');
+				$('#codice_fiscale').attr('value', '<?= $hire['codice_fiscale'] ?>');
 				$('#modal').modal('show');
 			});
 		<?php } ?>

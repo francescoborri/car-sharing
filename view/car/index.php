@@ -5,6 +5,7 @@ $connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 if (isset($_GET['start'], $_GET['end'])) {
 	$start = htmlentities($_GET['start']);
 	$end = htmlentities($_GET['end']);
+
 	$result = $connection->query(
 		"SELECT *
 		FROM `auto`
@@ -44,7 +45,7 @@ if (!$result) {
 				<div class="row justify-content-around mx-md-0 mx-3">
 					<div class="col-md-auto col-10 text-center my-auto">
 						<h1 class="display-4">Auto disponibili</h1>
-						<p class="lead text-break"><?= isset($_GET['start'], $_GET['end']) ? "Ci sono $result->num_rows auto disponibili nel periodo che hai selezionato." : 'Cerca un\'auto disponibile selezionando il periodo di noleggio.' ?></p>
+						<p class="lead text-break"><?= isset($_GET['start'], $_GET['end']) ? "Ci sono {$result->num_rows} auto disponibili nel periodo che hai selezionato." : 'Cerca un\'auto disponibile selezionando il periodo di noleggio.' ?></p>
 					</div>
 					<div class="col-md-auto">
 						<form action="./" method="GET">

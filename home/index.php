@@ -21,11 +21,11 @@
 					<div class="col-md-auto col-10 text-center mt-auto mb-auto">
 						<h1><span class="display-3">Benvenuto</span> nel <span class="display-3">Car sharing</span></h1>
 						<p class="lead text-break">
-							<?php if (!isset($_SESSION['username']) || !isset($_SESSION['start_time']) || time() - $_SESSION['start_time'] > SESSION_TIMEOUT) { ?>
+							<?php if (isset($_SESSION['username'], $_SESSION['start_time']) && time() - $_SESSION['start_time'] <= SESSION_TIMEOUT) { ?>
+								Buongiorno, <span class="text-capitalize"><?= $_SESSION['username'] ?></span>.
+							<?php } else { ?>
 								<a href="<?= ROOT . '/login' ?>" class="text-info">Accedi</a>, <a href="<?= ROOT . '/signin' ?>" class="text-info">registrati</a> o <a href="<?= ROOT . '/view/car' ?>" class="text-info">trova</a> un'auto disponibile quando vuoi tu.
 								<br>Qui sotto puoi trovare una selezione delle nostre auto a tua disposizione.
-							<?php } else { ?>
-								Buongiorno, <span class="text-capitalize"><?= $_SESSION['username'] ?></span>.
 							<?php } ?>
 						</p>
 					</div>

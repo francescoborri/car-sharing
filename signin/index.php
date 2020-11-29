@@ -33,16 +33,19 @@ if (isset($_POST['username'], $_POST['password'], $_POST['password_confirm'])) {
 	$username = htmlentities($_POST['username']);
 	$password = htmlentities($_POST['password']);
 	$password_confirm = htmlentities($_POST['password_confirm']);
+
 	if ($password != $password_confirm)
 		$message = 1;
 	else {
 		$encrypted_password = crypt($password, crypt($username, DB_SALT));
 		$connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 		$result = $connection->query("SELECT * FROM `utenti` WHERE `username` = '$username'");
+
 		if (!$result || $result->num_rows != 0)
 			$message = 2;
 		else
 			$message = $connection->query("INSERT INTO `utenti` (`username`, `password`) VALUES ('$username', '$encrypted_password')") ? 0 : 3;
+
 		$result->free();
 		$connection->close();
 	}
@@ -54,7 +57,14 @@ if (isset($_POST['username'], $_POST['password'], $_POST['password_confirm'])) {
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 	<link rel="stylesheet" href="<?= ROOT . '/css/default.css' ?>">
+	<style>
+		#show-hide-password-a,
+		#show-hide-password-a:hover {
+			color:#333;
+		}
+	</style>
 	<title>Car sharing - Registrati</title>
 </head>
 
@@ -74,6 +84,7 @@ if (isset($_POST['username'], $_POST['password'], $_POST['password_confirm'])) {
 		<div class="row justify-content-center mx-md-0 mx-3 mb-3">
 			<ul class="col-md-auto col-12 list-group shadow pr-0">
 				<li class="list-group-item p-3">
+					<small>Inserisci un username</small>
 					<div class="input-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text">@</span>
@@ -82,7 +93,8 @@ if (isset($_POST['username'], $_POST['password'], $_POST['password_confirm'])) {
 					</div>
 				</li>
 				<li class="list-group-item p-3">
-					<div class="input-group">
+					<small>Inserisci una password contenente almeno 8 caratteri, e che contenga maiuscole, minuscole e numeri</small>
+					<div id="password-container" class="input-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text">
 								<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-key" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -91,11 +103,19 @@ if (isset($_POST['username'], $_POST['password'], $_POST['password_confirm'])) {
 								</svg>
 							</span>
 						</div>
-						<input type="password" name="password" class="form-control" placeholder="Password" form="signin-form" minlength="8" required>
+						<input type="password" name="password" class="form-control" placeholder="Password" form="signin-form" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$" required>
+						<div class="input-group-append">
+							<div class="input-group-text">
+								<a href="" id="show-hide-password-a">
+									<i id="show-hide-password-icon" class="fa fa-eye-slash" aria-hidden="true"></i>
+								</a>
+							</div>
+						</div>
 					</div>
 				</li>
 				<li class="list-group-item p-3">
-					<div class="input-group">
+					<small>Ripeti la password</small>
+					<div id="password-confirm-container" class="input-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text">
 								<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-key" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -104,11 +124,11 @@ if (isset($_POST['username'], $_POST['password'], $_POST['password_confirm'])) {
 								</svg>
 							</span>
 						</div>
-						<input type="password" name="password_confirm" class="form-control" placeholder="Conferma password" form="signin-form" required>
+						<input type="password" name="password_confirm" class="form-control" placeholder="Ripeti password" form="signin-form" required>
 					</div>
 				</li>
 				<li class="list-group-item p-3">
-					<input type="submit" class="btn btn-primary btn-block" value="Registrati" form="signin-form">
+					<input id="submit-btn" type="submit" class="btn btn-primary btn-block" value="Registrati" form="signin-form" disabled>
 				</li>
 			</ul>
 		</div>
@@ -126,6 +146,7 @@ if (isset($_POST['username'], $_POST['password'], $_POST['password_confirm'])) {
 	<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+	<script src="<?= ROOT . '/js/signin.js' ?>"></script>
 	<?php if ($message != -1) { ?>
 		<script type="text/javascript">
 			$('#signin-error-modal').modal('show');

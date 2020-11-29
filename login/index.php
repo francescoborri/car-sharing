@@ -1,9 +1,9 @@
 <?php
 require_once '../private/config.php';
 
-$on_error = false;
-
+$error = false;
 session_start();
+
 if (isset($_SESSION['username'], $_SESSION['start_time']) && time() - $_SESSION['start_time'] <= SESSION_TIMEOUT)
 	header('location: ' . ROOT . '/home');
 else
@@ -12,20 +12,22 @@ else
 if (isset($_POST['username'], $_POST['password'])) {
 	$username = htmlentities($_POST['username']);
 	$password = htmlentities($_POST['password']);
+
 	$connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 	$result = $connection->query("SELECT * FROM `utenti` WHERE `username` = '$username'");
+
 	if (!$result || $result->num_rows == 0)
-		$on_error = true;
+		$error = true;
 	else {
 		$user_data = $result->fetch_array();
 		$password = crypt($password, crypt($username, DB_SALT));
+
 		if ($password == $user_data['password']) {
 			session_start();
 			$_SESSION['username'] = $username;
 			$_SESSION['start_time'] = time();
 			header('location: ' . ROOT . '/home');
-		} else
-			$on_error = true;
+		} else $error = true;
 	}
 	$result->free();
 	$connection->close();
@@ -37,7 +39,14 @@ if (isset($_POST['username'], $_POST['password'])) {
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 	<link rel="stylesheet" href="<?= ROOT . '/css/default.css' ?>">
+	<style>
+		#show-hide-password-a,
+		#show-hide-password-a:hover {
+			color:#333;
+		}
+	</style>
 	<title>Car sharing - Login</title>
 </head>
 
@@ -75,6 +84,13 @@ if (isset($_POST['username'], $_POST['password'])) {
 							</span>
 						</div>
 						<input type="password" name="password" class="form-control" placeholder="Password" form="login-form" required>
+						<div class="input-group-append">
+							<div class="input-group-text">
+								<a href="" id="show-hide-password-a">
+									<i id="show-hide-password-icon" class="fa fa-eye-slash" aria-hidden="true"></i>
+								</a>
+							</div>
+						</div>
 					</div>
 				</li>
 				<li class="list-group-item p-3">
@@ -84,7 +100,7 @@ if (isset($_POST['username'], $_POST['password'])) {
 		</div>
 	</div>
 	<form id="login-form" action="./" method="POST" class="d-none"></form>
-	<?php if ($on_error) { ?>
+	<?php if ($error) { ?>
 		<div class="modal" id="login-error-modal">
 			<div class="modal-dialog modal-dialog-centered modal-lg">
 				<div class="modal-content">
@@ -101,7 +117,8 @@ if (isset($_POST['username'], $_POST['password'])) {
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-	<?php if ($on_error) { ?>
+	<script src="<?= ROOT . '/js/login.js' ?>"></script>
+	<?php if ($error) { ?>
 		<script type="text/javascript">
 			$('#login-error-modal').modal('show');
 		</script>
