@@ -76,7 +76,7 @@ if (isset($_POST['codice_fiscale'], $_POST['cognome'], $_POST['nome'], $_POST['i
 				</li>
 				<li class="list-group-item p-3">
 					<small>Inserire l'indirizzo del nuovo socio</small>
-					<input type="text" name="indirizzo" class="form-control" placeholder="Via ... n° ..." form="new-member-form" required>
+					<input type="text" name="indirizzo" class="form-control" placeholder="Via ... n. ..." form="new-member-form" required>
 				</li>
 				<li class="list-group-item p-3">
 					<small>Inserire il numero di telefono del nuovo socio</small>
