@@ -18,7 +18,9 @@ if (!isset($_GET['type']) || $_GET['type'] == 'all') {
 	$result = $connection->query(
 		"SELECT *
 		FROM `noleggi`
-		WHERE `noleggi`.`data_restituzione` IS NULL
+		WHERE
+			`noleggi`.`data_restituzione` IS NULL AND
+			`noleggi`.`data_inizio` <= CURRENT_DATE()
 		ORDER BY `noleggi`.`data_inizio`"
 	);
 } else if ($_GET['type'] == 'late') {
@@ -38,7 +40,7 @@ if (!isset($_GET['type']) || $_GET['type'] == 'all') {
 	$result = $connection->query(
 		"SELECT *
 		FROM `noleggi`
-		WHERE `noleggi`.`data_restituzione` < CURRENT_DATE()
+		WHERE `noleggi`.`data_restituzione` IS NOT NULL
 		ORDER BY `noleggi`.`data_inizio`"
 	);
 } else if ($_GET['type'] == 'future') {
@@ -122,9 +124,11 @@ while ($row = $result->fetch_array())
 								<td class="align-middle">
 									<?php if ($hire['data_restituzione'] != '')
 										echo date('j M Y', strtotime($hire['data_restituzione']));
-									else { ?>
-										<button type="button" id="close-btn-<?= $index ?>" class="btn btn-info btn-sm">Chiudi questo noleggio</button>
-									<?php } ?>
+									else if (isset($_GET['type']) && ($_GET['type'] == 'active' || $_GET['type'] == 'late')) { ?>
+										<button type="button" id="close-btn-<?= $index ?>" class="btn btn-info btn-sm" <?= $hire['data_inizio'] > date('Y-m-d') ? 'disabled' : '' ?>>
+											Chiudi questo noleggio
+										</button>
+									<?php } else echo 'Non restituita'; ?>
 								</td>
 							</tr>
 						<?php } ?>
@@ -133,48 +137,52 @@ while ($row = $result->fetch_array())
 			</div>
 		</div>
 	</div>
-	<div class="modal fade" id="modal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Chiusura noleggio</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					Stai per chiudere questo noleggio, controlla i dati e conferma la data di restituzione.
-					<hr class="my-2">
-					<span class="small">ID:</span>
-					<input type="text" name="id-noleggio" id="id-noleggio" form="close-form" class="form-control" readonly>
-					<span class="small">Targa auto:</span>
-					<input type="text" id="targa-noleggio" class="form-control" readonly>
-					<span class="small">Codice fiscale cliente:</span>
-					<input type="text" id="codice-fiscale-noleggio" class="form-control" readonly>
-					<span class="small">Seleziona una data</span>
-					<input type="date" name="data-restituzione" form="close-form" class="form-control" value="<?= date('Y-m-d') ?>">
-					<form action="close.php" id="close-form" method="GET"></form>
-				</div>
-				<div class="modal-footer">
-					<button type="submit" class="btn btn-info mr-auto" form="close-form">Si</button>
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+	<?php if (isset($_GET['type']) && ($_GET['type'] == 'active' || $_GET['type'] == 'late')) { ?>
+		<div class="modal fade" id="modal">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Chiusura noleggio</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						Stai per chiudere questo noleggio, controlla i dati e conferma la data di restituzione.
+						<hr class="my-2">
+						<span class="small">ID:</span>
+						<input type="text" name="id_noleggio" id="id_noleggio" form="close-form" class="form-control" readonly>
+						<span class="small">Targa auto:</span>
+						<input type="text" id="targa" class="form-control" readonly>
+						<span class="small">Codice fiscale socio:</span>
+						<input type="text" id="codice_fiscale" class="form-control" readonly>
+						<span class="small">Seleziona una data</span>
+						<input type="date" name="data_restituzione" form="close-form" class="form-control" value="<?= date('Y-m-d') ?>">
+						<form action="close.php" id="close-form" method="GET"></form>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-info mr-auto" form="close-form">Si</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	<?php } ?>
 	<form id="hire-type" class="d-none" action="./" method="GET"></form>
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 	<script type="text/javascript">
-		<?php foreach ($hires as $index => $hire) { ?>
-			$('#close-btn-<?= $index ?>').click(() => {
-				$('#id_noleggio').attr('value', '<?= $hire['id_noleggio'] ?>');
-				$('#targa').attr('value', '<?= $hire['targa'] ?>');
-				$('#codice_fiscale').attr('value', '<?= $hire['codice_fiscale'] ?>');
-				$('#modal').modal('show');
-			});
-		<?php } ?>
+		<?php if (isset($_GET['type']) && ($_GET['type'] == 'active' || $_GET['type'] == 'late')) {
+			foreach ($hires as $index => $hire) { ?>
+				$('#close-btn-<?= $index ?>').click(() => {
+					$('#id_noleggio').attr('value', '<?= $hire['id_noleggio'] ?>');
+					$('#targa').attr('value', '<?= $hire['targa'] ?>');
+					$('#codice_fiscale').attr('value', '<?= $hire['codice_fiscale'] ?>');
+					$('#modal').modal('show');
+				});
+		<?php }
+		} ?>
 	</script>
 </body>
 

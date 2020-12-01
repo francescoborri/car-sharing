@@ -26,7 +26,7 @@ if (isset($_GET['codice_fiscale'], $_GET['start'], $_GET['end'])) {
 		"SELECT *
 		FROM `noleggi`
 		INNER JOIN `auto` USING(`targa`)
-		WHERE `codice_fiscale` = '$cf' AND 
+		WHERE `codice_fiscale` = '$codice_fiscale' AND 
 			IF(`noleggi`.`data_restituzione` is NULL,
 				'$start' < GREATEST(`noleggi`.`data_fine`, CURRENT_DATE()) AND '$end' > `noleggi`.`data_inizio`,
 				'$start' < `noleggi`.`data_restituzione` AND '$end' > `noleggi`.`data_inizio`)
@@ -94,7 +94,11 @@ while ($record = $members_result->fetch_assoc())
 								<li class="list-group-item p-3">
 									<div class="input-group">
 										<div class="input-group-prepend">
-											<span class="input-group-text">Inizio</span>
+											<span class="input-group-text">
+												<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-person-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+													<path fill-rule="evenodd" d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+												</svg>
+											</span>
 										</div>
 										<select class="custom-select" name="codice_fiscale" required>
 											<option disabled hidden selected>Seleziona un socio</option>
