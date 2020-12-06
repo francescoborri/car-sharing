@@ -34,13 +34,32 @@ if (isset($_POST['targa'], $_POST['codice_fiscale'], $_POST['data_inizio'], $_PO
 	$data_inizio = htmlentities($_POST['data_inizio']);
 	$data_fine = htmlentities($_POST['data_fine']);
 
-	// CHECK
+	$connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+	$targa_check_result = $connection->query(
+		"SELECT *
+		FROM `auto`
+		WHERE
+			`targa` = '$targa' AND
+			`targa` NOT IN (
+				SELECT `targa`
+				FROM `noleggi`
+				WHERE
+					IF(`noleggi`.`data_restituzione` is NULL,
+						'$data_inizio' < GREATEST(`noleggi`.`data_fine`, CURRENT_DATE()) AND '$data_fine' > `noleggi`.`data_inizio`,
+						'$data_inizio' < `noleggi`.`data_restituzione` AND '$data_fine' > `noleggi`.`data_inizio`)
+			)"
+	);
 
-	if (true) {
+	if (!preg_match('/^[A-Z]{2}\d{3}[A-Z]{2}$/', $targa)) {
 		$error = true;
 		$error_message = 'La targa inserita è invalida';
+	} else if (!preg_match('/^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$/', $codice_fiscale)) {
+		$error = true;
+		$error_message = 'Il codice fiscale inserito è invalido';
+	} else if ($targa_check_result->num_rows != 1) {
+		$error = true;
+		$error_message = 'L\'auto desiderata è già noleggiata nel periodo selezionato';
 	} else {
-
 		$result = $connection->query(
 			"INSERT INTO `noleggi`(`targa`, `codice_fiscale`, `data_inizio`, `data_fine`) 
 			VALUES ('$targa', '$codice_fiscale', '$data_inizio', '$data_fine')"
@@ -83,21 +102,21 @@ if (isset($_POST['targa'], $_POST['codice_fiscale'], $_POST['data_inizio'], $_PO
 			<ul class="col-md-auto col-12 list-group shadow pr-0">
 				<li class="list-group-item p-3">
 					<small>Scegli la targa dell'auto da prenotare</small>
-					<div id="targa-container" class="input-group">
+					<div class="input-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text">#</span>
 						</div>
-						<select name="targa" class="custom-select" form="new-hire-form">
+						<select name="targa" class="custom-select" form="new-hire-form" required>
 							<option disabled hidden selected>Seleziona una targa</option>
 							<?php foreach ($cars as $current) { ?>
-								<option value="<?= $current['targa'] ?>"><?= "{$current['targa']} - {$current['marca']} {$current['modello']}" ?></option>
+								<option value="<?= $current['targa'] ?>"><?= "{$current['targa']} - {$current['modello']}" ?></option>
 							<?php } ?>
 						</select>
 					</div>
 				</li>
 				<li class="list-group-item p-3">
 					<small>Seleziona il socio che vuole prenotare l'auto</small>
-					<div id="targa-container" class="input-group">
+					<div class="input-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text">
 								<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-person-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -105,7 +124,7 @@ if (isset($_POST['targa'], $_POST['codice_fiscale'], $_POST['data_inizio'], $_PO
 								</svg>
 							</span>
 						</div>
-						<select name="codice_fiscale" class="custom-select" form="new-hire-form">
+						<select name="codice_fiscale" class="custom-select" form="new-hire-form" required>
 							<option disabled hidden selected>Seleziona una socio</option>
 							<?php foreach ($members as $current) { ?>
 								<option value="<?= $current['codice_fiscale'] ?>"><?= "{$current['nome']} {$current['cognome']}" ?></option>
@@ -123,7 +142,16 @@ if (isset($_POST['targa'], $_POST['codice_fiscale'], $_POST['data_inizio'], $_PO
 					</div>
 				</li>
 				<li class="list-group-item p-3">
-					<input id="submit-btn" type="submit" class="btn btn-primary btn-block" value="Inserisci" form="new-car-form" disabled>
+					<small>Inserisci la data di fine del noleggio</small>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text">Fine</span>
+						</div>
+						<input type="date" name="data_fine" class="form-control" form="new-hire-form" required>
+					</div>
+				</li>
+				<li class="list-group-item p-3">
+					<input id="submit-btn" type="submit" class="btn btn-primary btn-block" value="Inserisci" form="new-hire-form" disabled>
 				</li>
 			</ul>
 		</div>
@@ -146,7 +174,7 @@ if (isset($_POST['targa'], $_POST['codice_fiscale'], $_POST['data_inizio'], $_PO
 			<div class="modal-dialog modal-dialog-centered modal-lg">
 				<div class="modal-content">
 					<div class="alert alert-success mb-0">
-						<span class="lead">Auto aggiunta correttamente</span>
+						<span class="lead">Noleggio prenotato correttamente</span>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Chiudi">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -158,7 +186,7 @@ if (isset($_POST['targa'], $_POST['codice_fiscale'], $_POST['data_inizio'], $_PO
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-	<script src="<?= ROOT . '/js/new-car.js' ?>"></script>
+	<script src="<?= ROOT . '/js/new-hire.js' ?>"></script>
 	<?php if ($error || $success) { ?>
 		<script type="text/javascript">
 			$('#<?= $error ? 'error' : ($success ? 'success' : '') ?>-modal').modal('show');

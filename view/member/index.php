@@ -5,7 +5,7 @@ require_once ABSOLUTE_ROOT . '/private/session.php';
 $connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
 $members_result = $connection->query('SELECT * FROM `soci` ORDER BY `cognome`');
-$title = "Noleggi di un socio.";
+$title = "Noleggi di un socio";
 $description = "Visualizza i noleggi effettuati da un socio in un determinato periodo.";
 
 if (isset($_GET['codice_fiscale'], $_GET['start'], $_GET['end'])) {
@@ -34,7 +34,7 @@ if (isset($_GET['codice_fiscale'], $_GET['start'], $_GET['end'])) {
 	);
 
 	$title = "Noleggi di {$member['nome']} {$member['cognome']}";
-	$description = "Stai visualizzando i noleggi di {$member['nome']} {$member['cognome']}, che ha noleggiato {$hires->num_rows} auto fra il " . date('j M Y', strtotime($start)) . " e il " . date('j M Y', strtotime($end));
+	$description = "Stai visualizzando i noleggi di {$member['nome']} {$member['cognome']}, che ha noleggiato {$hires->num_rows} auto fra il " . date('j M Y', strtotime($start)) . ' e il ' . date('j M Y', strtotime($end)) . '.';
 } else
 	$hires = $connection->query(
 		"SELECT *
@@ -125,7 +125,7 @@ while ($record = $members_result->fetch_assoc())
 									</div>
 								</li>
 								<li class="list-group-item p-3">
-									<input type="submit" class="btn btn-primary btn-block" value="Cerca">
+									<input id="submit-btn" type="submit" class="btn btn-primary btn-block" value="Cerca" disabled>
 								</li>
 							</ul>
 						</form>
@@ -158,7 +158,7 @@ while ($record = $members_result->fetch_assoc())
 									<td class="align-middle"><?= $record['modello'] ?></td>
 									<td class="align-middle"><?= date('j M Y', strtotime($record['data_inizio'])) ?></td>
 									<td class="align-middle"><?= date('j M Y', strtotime($record['data_fine'])) ?></td>
-									<td class="align-middle"><?= date('j M Y', strtotime($record['data_restituzione'])) ?></td>
+									<td class="align-middle"><?= $record['data_restituzione'] != '' ? date('j M Y', strtotime($record['data_restituzione'])) : 'Non restituita' ?></td>
 								</tr>
 							<?php } ?>
 						</tbody>
@@ -197,6 +197,7 @@ while ($record = $members_result->fetch_assoc())
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+	<script src="<?= ROOT . '/js/check-date.js' ?>"></script>
 </body>
 
 </html>
