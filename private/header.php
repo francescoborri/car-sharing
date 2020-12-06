@@ -28,7 +28,7 @@ $loggedin = isset($_SESSION['username'], $_SESSION['start_time']) && time() - $_
 						<a class="dropdown-item" href="<?= ROOT . '/new/member' ?>">Socio</a>
 					</div>
 				</li>
-				<li class="nav-item dropdown">
+				<li class="nav-item dropdown mb-md-0 mb-2">
 					<a class="nav-link dropdown-toggle" data-toggle="dropdown">Visualizza</a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" href="<?= ROOT . '/view/car' ?>">Auto</a>
