@@ -56,6 +56,9 @@ if (isset($_POST['targa'], $_POST['codice_fiscale'], $_POST['data_inizio'], $_PO
 	} else if (!preg_match('/^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$/', $codice_fiscale)) {
 		$error = true;
 		$error_message = 'Il codice fiscale inserito è invalido';
+	} else if ($data_fine < $data_inizio) {
+		$error = true;
+		$error_message = 'Le date inserite sono errate';
 	} else if ($targa_check_result->num_rows != 1) {
 		$error = true;
 		$error_message = 'L\'auto desiderata è già noleggiata nel periodo selezionato';
