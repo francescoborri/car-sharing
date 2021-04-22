@@ -1,5 +1,5 @@
 <?php
-define('DB_NAME', 'car-sharing');
+define('DB_NAME', 'car_sharing');
 define('DB_USER', 'root');
 define('DB_PASSWORD', '');
 define('DB_HOST', 'localhost');
